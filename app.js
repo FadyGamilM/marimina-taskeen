@@ -1,3 +1,5 @@
+const http = require('http');
+const fs = require('fs');	
 const express = require("express");
 const { google } = require("googleapis");
 require("dotenv").config();
@@ -9,6 +11,9 @@ connString = process.env.connection_string;
 
 //! inistantiate an express server app
 const app = express();
+
+/* serve static content along side with html */
+app.use(express.static(__dirname + '/public'));
 
 //! middleware for post requests
 app.use(express.json());
@@ -153,6 +158,11 @@ app.post("/user", async (req, res, next) => {
 	});
 });
 
-app.listen(process.env.PORT || 5000, () => {
-	console.log("running ");
+app.get('/', async (req, res, next) => {
+	res.writeHead(200, { 'content-type': 'text/html' });
+	fs.createReadStream('./public/index.html').pipe(res);
+});
+
+app.listen(process.env.PORT || 8080, () => {
+	console.log("Server is running on port 8080!!");
 });
