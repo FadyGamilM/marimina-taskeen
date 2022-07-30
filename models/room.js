@@ -1,9 +1,17 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const RoomSchema = new Schema(
+const RoomSchema = new mongoose.Schema(
 	{
-		roomMates: [String],
+		roomID: {
+			type: String,
+			required: [true, "Room Id Is Required"],
+		},
+		roomMembers: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 	},
 
 	{

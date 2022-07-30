@@ -1,14 +1,13 @@
-const http = require('http')
-const fs = require('fs')
-
+const http = require('http');
+const fs = require('fs');	
 const express = require("express");
 const { google } = require("googleapis");
 require("dotenv").config();
 const Room = require("./models/room");
+const User = require("./models/User");
 const { connectDB } = require("./database-connection");
 const bodyParser = require("body-parser");
 connString = process.env.connection_string;
-
 
 //! inistantiate an express server app
 const app = express();
@@ -26,7 +25,7 @@ connectDB();
 //! @METHOD: GET
 //! @URL: /users
 //! @RESPONSE: { men: [........], women: [......] }
-app.get("/users", async (req, res, next) => {
+app.get("/users-sheet", async (req, res, next) => {
 	// create the auth object to authenticate
 	const auth = new google.auth.GoogleAuth({
 		keyFile: "cred.json",
@@ -95,12 +94,19 @@ app.get("/users", async (req, res, next) => {
 //! @URL: /room
 //! @RESPONSE: {res: "created"}
 app.post("/room", async (req, res, next) => {
-	const room = new Room({
-		roomMates: req.body.roomMates,
+	const newRoom = new Room({
+		...req.body,
 	});
-
-	let result = await room.save();
-	res.json({ res: result });
+	let result = await newRoom.save();
+	// array of ids
+	let usersIds = req.body.roomMembers;
+	let roomID = req.body.roomID;
+	for (let userID of usersIds) {
+		const userDocument = await User.findByIdAndUpdate(userID, {
+			roomID: result._id,
+		});
+	}
+	res.json(result);
 });
 
 let getUsersFromRooms = async () => {
@@ -113,6 +119,7 @@ let getUsersFromRooms = async () => {
 	registeredUsers = [].concat.apply([], registeredUsers);
 	return registeredUsers;
 };
+
 app.get("/rooms", async (req, res, next) => {
 	// read from DB to get all users that are already registered in rooms
 	const users = await Room.find({}).select("roomMates");
@@ -124,7 +131,33 @@ app.get("/rooms", async (req, res, next) => {
 	res.json({ usersInRooms: registeredUsers });
 });
 
-/* / get the main form */
+app.get("/users", async (req, res, next) => {
+	// read from DB to get all users that are already registered in rooms
+	const usersNotInRoom = await User.find({ roomID: null });
+	let boys = [],
+		girls = [];
+	usersNotInRoom.forEach((user) => {
+		if (user.gender === "ذكر") {
+			boys.push(user);
+		} else if (user.gender === "انثي") {
+			girls.push(user);
+		}
+	});
+	res.json({
+		boys,
+		girls,
+	});
+});
+
+app.post("/user", async (req, res, next) => {
+	// create new user "the roomID can be null .."
+	let newUser = new User({ ...req.body });
+	let result = await newUser.save();
+	res.json({
+		"New User": result,
+	});
+});
+
 app.get('/', async (req, res, next) => {
 	res.writeHead(200, { 'content-type': 'text/html' });
 	fs.createReadStream('./public/index.html').pipe(res);
