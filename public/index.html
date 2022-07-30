@@ -12,6 +12,9 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- multiple select css -->
+    <link rel="stylesheet" href="css/virtual-select.min.css" />
     
     <!-- Style -->
     <link rel="stylesheet" href="css/style.css">
@@ -34,8 +37,8 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group first">
-                    <label for="fname">الاسم بالكامل</label>
-                    <input type="text" class="form-control" placeholder="اكتب اسمك" id="fname">
+                    <label for="name">الاسم بالكامل</label>
+                    <input type="text" class="form-control" placeholder="اكتب اسمك" id="name">
                   </div>    
                 </div>
               </div>
@@ -50,8 +53,26 @@
                   </div>    
                 </div>
               </div>
+              <div class="row" class="multi-select">
+                <div class="col-md-12">
+                  <div class="form-group first">
+                    <label>اختار الاسماء فى الغرفة</label>
+                    <br>
+                    <div id="example-select" class="form-control" name="multi-select"></div>
+                  </div>    
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group first">
+                    <label for="lname">ملاحظات</label>
+                    <textarea type="text" class="form-control" placeholder="ملاحظات...." id="notes"></textarea>
+                  </div>    
+                </div>
+              </div>
               
-              <input type="submit" value="Register" class="btn px-5 btn-primary">
+              <input type="submit" value="انشاء غرفة" class="btn px-5 btn-primary">
 
             </form>
           </div>
@@ -68,5 +89,7 @@
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/virtual-select.min.js"></script>
+    <script src="js/init-multiselect.js"></script>
   </body>
 </html>
