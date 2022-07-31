@@ -14,7 +14,7 @@ $(function() {
 
     $.ajax({
         type: "GET",
-        url: "http://localhost:8080/users",
+        url: 'https://marimina-tasken.herokuapp.com/users', //TODO....fix this by adding support for CORS
         contentType: 'application/json',
         success: function(response) {
             let boys = response.boys.map(boy => boy.name);
