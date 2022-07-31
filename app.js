@@ -134,8 +134,7 @@ app.get("/rooms", async (req, res, next) => {
 app.get("/users", async (req, res, next) => {
 	// read from DB to get all users that are already registered in rooms
 	const usersNotInRoom = await User.find({ roomID: null });
-	let boys = [],
-		girls = [];
+	let boys = [], girls = [];
 	usersNotInRoom.forEach((user) => {
 		if (user.gender === "ذكر") {
 			boys.push(user);
