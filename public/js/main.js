@@ -19,11 +19,22 @@ $(function() {
 			selectedNames = $('#girls-select').val();
 		}
 		
-		if (selectedNames.length < 2) {
-			alert('من فضلك اختار على الاقل اسمين');
+		if (selectedNames.length < 2 || selectedNames.length > 3) {
+			alert('من فضلك اختار على اسمين او ثلاثة اسماء');
 		} else {
-			console.log(roomType);
-			console.log(selectedNames);
+			$.ajax({
+				type: "POST",
+				url: 'https://marimina-tasken.herokuapp.com/rooms', //TODO....fix this by adding support for CORS
+				contentType: 'application/json',
+				data: JSON.stringify({roomType, selectedNames}),
+				success: function(response) {
+					alert("تم انشاء غرفة بنجاح");
+					window.location.reload(true);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("Failed to get boys and girls not in a room!!!");
+				},
+			});   
 		}
 	})
     

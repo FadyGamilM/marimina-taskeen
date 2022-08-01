@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');	
 const express = require("express");
 const { google } = require("googleapis");
+const uuid = require('uuid');
 require("dotenv").config();
 const Room = require("./models/room");
 const User = require("./models/User");
@@ -91,17 +92,26 @@ app.get("/users-sheet", async (req, res, next) => {
 
 //! @DESCRIPTION:  create a new room
 //! @METHOD: POST
-//! @URL: /room
+//! @URL: /rooms
 //! @RESPONSE: {res: "created"}
-app.post("/room", async (req, res, next) => {
+app.post("/rooms", async (req, res, next) => {
+	const roomType = req.body.roomType === 'boys' ? 'br': 'gr';
+	const selectedNames = req.body.selectedNames;
+	const userIds = [];
+
+	for (let userName of selectedNames) {
+		const userDocument = await User.findOne({name: userName});
+		userIds.push(userDocument.id);
+	}
+
 	const newRoom = new Room({
-		...req.body,
+		roomID: roomType + selectedNames.length + uuid.v4(),
+		roomMembers: userIds
 	});
 	let result = await newRoom.save();
-	// array of ids
-	let usersIds = req.body.roomMembers;
+
 	let roomID = req.body.roomID;
-	for (let userID of usersIds) {
+	for (let userID of userIds) {
 		const userDocument = await User.findByIdAndUpdate(userID, {
 			roomID: result._id,
 		});
