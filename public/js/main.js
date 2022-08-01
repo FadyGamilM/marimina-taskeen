@@ -22,6 +22,7 @@ $(function() {
 		if (selectedNames.length < 2 || selectedNames.length > 3) {
 			alert('من فضلك اختار على اسمين او ثلاثة اسماء');
 		} else {
+			$('#submit').prop('disabled', true);
 			$.ajax({
 				type: "POST",
 				url: 'https://marimina-tasken.herokuapp.com/rooms', //TODO....fix this by adding support for CORS
