@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');	
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const { google } = require("googleapis");
 const uuid = require('uuid');
@@ -8,6 +9,7 @@ const Room = require("./models/room");
 const User = require("./models/User");
 const { connectDB } = require("./database-connection");
 const bodyParser = require("body-parser");
+const auth = require("./middleware/auth");
 connString = process.env.connection_string;
 
 //! inistantiate an express server app
@@ -26,7 +28,7 @@ connectDB();
 //! @METHOD: GET
 //! @URL: /users
 //! @RESPONSE: { men: [........], women: [......] }
-app.get("/users-sheet", async (req, res, next) => {
+app.get("/sync-names", async (req, res, next) => {
 	// create the auth object to authenticate
 	const auth = new google.auth.GoogleAuth({
 		keyFile: "cred.json",
@@ -42,7 +44,7 @@ app.get("/users-sheet", async (req, res, next) => {
 		auth: client,
 	});
 
-	const spreadsheetId = "1s_KoN-yqB1hDUZHsVnX0vQ6OAFLmR1nWIUncag-jxvk";
+	const spreadsheetId = process.env.spreadsheet_id;
 
 	// get sheet metadata
 	const metaData = await googleSheets.spreadsheets.get({
@@ -51,42 +53,45 @@ app.get("/users-sheet", async (req, res, next) => {
 	});
 
 	// read rows from spreadsheet
-	const Rows = await googleSheets.spreadsheets.values.get({
+	const names = await googleSheets.spreadsheets.values.get({
 		auth,
 		spreadsheetId,
-		range: "Sheet1",
+		range: "C3:C622",
+	});
+	const genders = await googleSheets.spreadsheets.values.get({
+		auth,
+		spreadsheetId,
+		range: "E3:E622",
 	});
 
 	// [ ["name", "gender"],  ["fady", "man"],  ... ]
-	let ArrOfRows = Rows.data.values;
+	let allNames = names.data.values.flat();
+	let allGenders = genders.data.values.flat();
 	let men = [];
 	let women = [];
 
-	//! read from DB to get all users that are already registered in rooms
-	const users = await Room.find({}).select("roomMates");
-	let registeredUsers = [];
-	users.forEach((room) => {
-		registeredUsers.push(room.roomMates);
-	});
-	registeredUsers = [].concat.apply([], registeredUsers);
+	// read all users from database
+	const users = await User.find({});
+	const existingNames = users.map(user => user.name);
 
 	// loop through all rows except the 1st row
-	ArrOfRows.filter((row) => {
-		if (row[1] === "ذكر") {
-			if (!registeredUsers.includes(row[0])) {
-				men.push(row[0]);
-			}
-		} else if (row[1] === "انثي") {
-			if (!registeredUsers.includes(row[0])) {
-				women.push(row[0]);
-			}
+	for(let i = 0; i < allNames.length; i++) {
+		if (existingNames.indexOf(allNames[i]) != -1) {
+			console.log(`name ${allNames[i]} already exists`);
+			continue;
 		}
-	});
+		
+		let newUser = new User({name: allNames[i], gender: allGenders[i]});
+		newUser.save(function(err, doc) {
+			if (err) console.log(err);
+			console.log(`The new name ${allNames[i]} is save successfuly to the database`);
+		});
+	}
 
 	// return the response back
 	res.json({
-		men: men,
-		women: women,
+		status: 200,
+		message: 'OK',
 	});
 });
 
