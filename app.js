@@ -67,8 +67,6 @@ app.get("/sync-names", async (req, res, next) => {
 	// [ ["name", "gender"],  ["fady", "man"],  ... ]
 	let allNames = names.data.values.flat();
 	let allGenders = genders.data.values.flat();
-	let men = [];
-	let women = [];
 
 	// read all users from database
 	const users = await User.find({});
@@ -153,7 +151,7 @@ app.get("/users", async (req, res, next) => {
 	usersNotInRoom.forEach((user) => {
 		if (user.gender === "ذكر") {
 			boys.push(user);
-		} else if (user.gender === "انثي") {
+		} else {
 			girls.push(user);
 		}
 	});
