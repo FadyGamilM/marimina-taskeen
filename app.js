@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');	
+const mongoXlsx = require('mongo-xlsx');
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const { google } = require("googleapis");
@@ -93,6 +94,44 @@ app.get("/sync-names", async (req, res, next) => {
 	});
 });
 
+app.get('/download-xls', async (req, res, next) => {
+	const users = await User.find({});
+	const rooms = await Room.find({});
+	let data = users.map(user => {
+		notes = null;
+		if (user.roomId) {
+			let room = rooms.filter(room => room.id == user.roomId);
+			notes = room.notes;
+		}
+		return {name: user.name, gender: user.gender, roomId: user.roomId, notes: notes};
+	});
+
+	let model = mongoXlsx.buildDynamicModel(data);
+
+	mongoXlsx.mongoData2Xlsx(data, model, function(err, data) {
+		let readStream = fs.createReadStream(data.fullPath);
+
+		const deleteFile = () => {
+			fs.unlink(data.fullPath, function (err) {
+				if (err) throw err;
+				console.log('File deleted!');
+			});
+		}
+		// This will wait until we know the readable stream is actually valid before piping
+		readStream.on('open', function () {
+			// This just pipes the read stream to the response object (which goes to the client)
+			readStream.pipe(res);
+			deleteFile();
+		});
+		
+		// This catches any errors that happen while creating the readable stream (usually invalid names)
+		readStream.on('error', function(err) {
+			res.end(err);
+			deleteFile();
+		});
+	});
+});
+
 //! @DESCRIPTION:  create a new room
 //! @METHOD: POST
 //! @URL: /rooms
@@ -100,6 +139,7 @@ app.get("/sync-names", async (req, res, next) => {
 app.post("/rooms", async (req, res, next) => {
 	const roomType = req.body.roomType === 'boys' ? 'br': 'gr';
 	const selectedNames = req.body.selectedNames;
+	const notes = req.body.notes;
 	const userIds = [];
 
 	for (let userName of selectedNames) {
@@ -109,6 +149,7 @@ app.post("/rooms", async (req, res, next) => {
 
 	const newRoom = new Room({
 		roomID: roomType + selectedNames.length + uuid.v4(),
+		notes: notes,
 		roomMembers: userIds
 	});
 	let result = await newRoom.save();

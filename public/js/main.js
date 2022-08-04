@@ -12,6 +12,7 @@ $(function() {
 	$('form').submit((event) => {
 		event.preventDefault();
 		const roomType = $('#room-type').find(":selected").val();
+		const notes = $('#notes').val();
 		let selectedNames = null;
 		if (roomType === 'boys') {
 			selectedNames = $('#boys-select').val();
@@ -27,7 +28,7 @@ $(function() {
 				type: "POST",
 				url: 'https://marimina-tasken.herokuapp.com/rooms', //TODO....fix this by adding support for CORS
 				contentType: 'application/json',
-				data: JSON.stringify({roomType, selectedNames}),
+				data: JSON.stringify({roomType, selectedNames, notes}),
 				success: function(response) {
 					alert("تم انشاء غرفة بنجاح");
 					window.location.reload(true);

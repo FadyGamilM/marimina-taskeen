@@ -6,6 +6,9 @@ const RoomSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Room Id Is Required"],
 		},
+		notes: {
+			type: String
+		},
 		roomMembers: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
