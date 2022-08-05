@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const UserSChema = new mongoose.Schema(
 	{
+		seqNum: {
+			type: String,
+		},
 		name: {
 			type: String,
 		},

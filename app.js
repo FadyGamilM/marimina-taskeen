@@ -29,7 +29,7 @@ connectDB();
 //! @METHOD: GET
 //! @URL: /users
 //! @RESPONSE: { men: [........], women: [......] }
-app.get("/sync-names", async (req, res, next) => {
+app.post('/sync-names', async (req, res, next) => {
 	// create the auth object to authenticate
 	const auth = new google.auth.GoogleAuth({
 		keyFile: "cred.json",
@@ -57,30 +57,36 @@ app.get("/sync-names", async (req, res, next) => {
 	const names = await googleSheets.spreadsheets.values.get({
 		auth,
 		spreadsheetId,
-		range: "C3:C622",
+		range: "C3:C626",
+	});
+	const Ids = await googleSheets.spreadsheets.values.get({
+		auth,
+		spreadsheetId,
+		range: "B3:B626",
 	});
 	const genders = await googleSheets.spreadsheets.values.get({
 		auth,
 		spreadsheetId,
-		range: "E3:E622",
+		range: "E3:E626",
 	});
 
 	// [ ["name", "gender"],  ["fady", "man"],  ... ]
 	let allNames = names.data.values.flat();
+	let allIds = Ids.data.values.flat();
 	let allGenders = genders.data.values.flat();
 
 	// read all users from database
 	const users = await User.find({});
-	const existingNames = users.map(user => user.name);
+	const existingIds = users.map(user => user.seqNum);
 
 	// loop through all rows except the 1st row
 	for(let i = 0; i < allNames.length; i++) {
-		if (existingNames.indexOf(allNames[i]) != -1) {
+		if (existingIds.indexOf(allIds[i]) != -1) {
 			console.log(`name ${allNames[i]} already exists`);
 			continue;
 		}
 		
-		let newUser = new User({name: allNames[i], gender: allGenders[i]});
+		let newUser = new User({name: allNames[i], gender: allGenders[i], seqNum: allIds[i]});
 		newUser.save(function(err, doc) {
 			if (err) console.log(err);
 			console.log(`The new name ${allNames[i]} is save successfuly to the database`);
@@ -101,6 +107,7 @@ app.get('/download-xls', async (req, res, next) => {
 	const csvWriter = createCsvWriter({
 		path: filePath,
 		header: [
+			{id: 'id', title: 'id'},
 			{id: 'name', title: 'name'},
 			{id: 'gender', title: 'gender'},
 			{id: 'roomID', title: 'roomID'},
@@ -114,7 +121,9 @@ app.get('/download-xls', async (req, res, next) => {
 			roomNotes = room.notes;
 			console.log(room);
 		}
-		return {name: user.name, 
+		return {
+				id: user.seqNum,
+				name: user.name, 
 				gender: user.gender, 
 				roomID: (user.roomID) ? user.roomID.toString() : user.roomID,
 				notes: roomNotes};
