@@ -119,7 +119,6 @@ app.get('/download-xls', async (req, res, next) => {
 				roomID: (user.roomID) ? user.roomID.toString() : user.roomID,
 				notes: roomNotes};
 	});
-	console.log(data)
 
 	const deleteFile = () => {
 		fs.unlink(filePath, function (err) {
