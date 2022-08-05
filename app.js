@@ -129,20 +129,12 @@ app.get('/download-xls', async (req, res, next) => {
 				notes: roomNotes};
 	});
 
-	const deleteFile = () => {
-		fs.unlink(filePath, function (err) {
-			if (err) throw err;
-			console.log('File deleted!');
-		});
-	}
-
 	csvWriter
 		.writeRecords(data)
 		.then(()=> {
 			let readStream = fs.createReadStream(filePath);
 			res.set('content-disposition', `attachment; filename="${ filePath }"`);
 			readStream.pipe(res);
-			deleteFile();
 		});
 });
 
