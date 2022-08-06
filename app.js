@@ -106,10 +106,12 @@ app.get('/download-xls', async (req, res, next) => {
 	const filePath = 'file.csv';
 	const csvWriter = createCsvWriter({
 		path: filePath,
+		encoding: 'utf16',
 		header: [
 			{id: 'id', title: 'id'},
 			{id: 'name', title: 'name'},
 			{id: 'gender', title: 'gender'},
+			{id: 'roomType', title: 'roomType'},
 			{id: 'roomID', title: 'roomID'},
 			{id: 'notes', title: 'notes'},
 	]
@@ -117,10 +119,12 @@ app.get('/download-xls', async (req, res, next) => {
 	let data = users.map(user => {
 		let roomNotes = null;
 		let userRoomId = null;
+		let userRoomType = null;
 		if (user.roomID) {
 			let room = rooms.find(room => room._id.toString() == user.roomID.toString());
 			roomNotes = room.notes;
 			userRoomId = room.roomID;
+			userRoomType = room.roomType;
 			console.log(room);
 		}
 		return {
@@ -128,6 +132,7 @@ app.get('/download-xls', async (req, res, next) => {
 				name: user.name, 
 				gender: user.gender, 
 				roomID: userRoomId,
+				roomType: userRoomType,
 				notes: roomNotes};
 	});
 
@@ -157,6 +162,7 @@ app.post("/rooms", async (req, res, next) => {
 
 	const newRoom = new Room({
 		roomID: roomType + selectedNames.length + uuid.v4(),
+		roomType: req.body.roomType,
 		notes: notes,
 		roomMembers: userIds
 	});
