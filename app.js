@@ -145,7 +145,7 @@ app.get('/download-xls', async (req, res, next) => {
 //! @URL: /rooms
 //! @RESPONSE: {res: "created"}
 app.post("/rooms", async (req, res, next) => {
-	const roomType = req.body.roomType === 'boys' ? 'br': 'gr';
+	const roomType = req.body.roomType === 'boys' ? 'br': (req.body.roomType === 'girls' ? 'gr': 'fr');
 	const selectedNames = req.body.selectedNames;
 	const notes = req.body.notes;
 	const userIds = [];
