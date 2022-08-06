@@ -22,7 +22,7 @@ $(function() {
             let all = [...boys, ...girls];
             initMultiSelect('#boys-select', boys);
             initMultiSelect('#girls-select', girls);
-            initMultiSelect('#families-select', girls);
+            initMultiSelect('#families-select', all);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             alert("Failed to get boys and girls not in a room!!!");
