@@ -116,16 +116,18 @@ app.get('/download-xls', async (req, res, next) => {
 	});
 	let data = users.map(user => {
 		let roomNotes = null;
+		let userRoomId = null;
 		if (user.roomID) {
 			let room = rooms.find(room => room._id.toString() == user.roomID.toString());
 			roomNotes = room.notes;
+			userRoomId = room.roomID;
 			console.log(room);
 		}
 		return {
 				id: user.seqNum,
 				name: user.name, 
 				gender: user.gender, 
-				roomID: (user.roomID) ? user.roomID.toString() : user.roomID,
+				roomID: userRoomId,
 				notes: roomNotes};
 	});
 
