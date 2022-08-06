@@ -25,7 +25,7 @@ $(function() {
             initMultiSelect('#families-select', all);
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert("Failed to get boys and girls not in a room!!!");
+            alert("حصلت مشكلة فى الفورم..من فضلك كلم مجموعة الحجز");
         },
     });    
 
