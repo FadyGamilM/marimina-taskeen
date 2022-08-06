@@ -20,8 +20,10 @@ $(function() {
 			selectedNames = $('#girls-select').val();
 		}
 		
-		if (selectedNames.length < 2 || selectedNames.length > 3) {
-			alert('من فضلك اختار على اسمين او ثلاثة اسماء');
+		if (roomType !== 'families' && selectedNames.length < 2 || selectedNames.length > 3) {
+			alert('من فضلك اختار اسمين او ثلاثة اسماء لغرف الاولاد و البنات');
+		} else if (roomType === 'families' && && selectedNames.length < 2 || selectedNames.length > 4) {
+			alert('من فضلك اختار من اسمين حتى 4 اسماء للغرف العائلية');
 		} else {
 			$('#submit').prop('disabled', true);
 			$.ajax({

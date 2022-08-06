@@ -32,13 +32,20 @@
         <div class="row align-items-center justify-content-center">
           <div class="col-md-7 py-5">
             <h3>تفاصيل الغرفة</h3>
-            <p class="mb-4">ممكن نزود هنا تعليمات</p>
+            <ul>
+              <li>اختار الناس اللى عايز تسكنها فى الغرفة</li>
+              <li>ما تنساش تختار اسمك لو عايز تكون فى نفس الغرفة</li>
+              <li>الغرفة شخصين أو ثلاثة اشخاص فقط</li>
+              <li>الغرفة العائلية ممكن تكون 4 اشخاص</li>
+              <li>الاطفال بتتسكن تلقائيا مع اهلها</li>
+              <li>برجاء كتابة اى ملاحظات فى الحالات الخاصة</li>
+            </ul>
             <form action="#" method="post">
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group first">
                     <label for="name">الاسم بالكامل</label>
-                    <input type="text" class="form-control" placeholder="اكتب اسمك" id="name">
+                    <input type="text" class="form-control" placeholder="اكتب اسمك" id="name" required>
                   </div>    
                 </div>
               </div>
@@ -49,6 +56,7 @@
                     <select name="room-type" class="form-control" id="room-type">
                       <option value="boys">اولاد</option>
                       <option value="girls">بنات</option>
+                      <option value="families">بنات</option>
                     </select>
                   </div>    
                 </div>
@@ -58,8 +66,9 @@
                   <div class="form-group first">
                     <label>اختار الاسماء فى الغرفة</label>
                     <br>
-                    <div id="boys-select" class="form-control" name="multi-select"></div>
-                    <div id="girls-select" class="form-control hidden" name="multi-select"></div>
+                    <div id="boys-select" class="form-control" name="multi-select-1"></div>
+                    <div id="girls-select" class="form-control hidden" name="multi-select-2"></div>
+                    <div id="families-select" class="form-control hidden" name="multi-select-3"></div>
                   </div>    
                 </div>
               </div>
