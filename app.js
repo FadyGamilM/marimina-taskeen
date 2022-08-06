@@ -106,7 +106,7 @@ app.get('/download-xls', async (req, res, next) => {
 	const filePath = 'file.csv';
 	const csvWriter = createCsvWriter({
 		path: filePath,
-		encoding: 'utf16',
+		encoding: 'utf16le',
 		header: [
 			{id: 'id', title: 'id'},
 			{id: 'name', title: 'name'},
