@@ -125,7 +125,6 @@ app.get('/download-xls', async (req, res, next) => {
 			roomNotes = room.notes;
 			userRoomId = room.roomID;
 			userRoomType = room.roomType;
-			console.log(room);
 		}
 		return {
 				id: user.seqNum,
