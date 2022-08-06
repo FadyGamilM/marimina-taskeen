@@ -16,8 +16,10 @@ $(function() {
 		let selectedNames = null;
 		if (roomType === 'boys') {
 			selectedNames = $('#boys-select').val();
-		} else {
+		} else if (roomType === 'girls') {
 			selectedNames = $('#girls-select').val();
+		} else {
+			selectedNames = $('#families-select').val();
 		}
 		
 		if (roomType !== 'families' && (selectedNames.length < 1 || selectedNames.length > 3)) {
