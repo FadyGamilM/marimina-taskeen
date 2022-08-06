@@ -21,9 +21,9 @@ $(function() {
 		}
 		
 		if (roomType !== 'families' && (selectedNames.length < 1 || selectedNames.length > 3)) {
-			alert('من فضلك اختار اسمين او ثلاثة اسماء لغرف الاولاد و البنات');
+			alert('من فضلك اختار من اسم حتى ثلاثة اسماء لغرف الاولاد و البنات');
 		} else if (roomType === 'families' && (selectedNames.length < 1 || selectedNames.length > 4)) {
-			alert('من فضلك اختار من اسمين حتى 4 اسماء للغرف العائلية');
+			alert('من فضلك اختار من اسم حتى 4 اسماء للغرف العائلية');
 		} else {
 			$('#submit').prop('disabled', true);
 			$.ajax({
