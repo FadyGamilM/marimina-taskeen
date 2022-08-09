@@ -25,7 +25,8 @@ $(function() {
 		if (selectedNames.length < 1 || selectedNames.length > 3) {
 			alert('من فضلك اختار من اسم حتى ثلاثة اسماء');
 		} else {
-			if (confirm(`متأكد انك عايز تسكن ${selectedNames} مع بعض؟`)) {
+			let message = null;
+			if (confirm(`متأكد انك عايز تسكن ${selectedNames} فى غرفة واحدة؟`)) {
 				$('#submit').prop('disabled', true);
 				$.ajax({
 					type: "POST",
